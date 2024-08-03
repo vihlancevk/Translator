@@ -26,8 +26,11 @@
         <div class="sourceLanguage">
             <h>Select the source language:</h>
             <label>
-                <select th:field="*{sourceLanguage}">
-                    <option th:each="sLang : ${languages}" th:value="${sLang.code}" th:text="${sLang.name}"></option>
+                <select id="sourceLanguage" name="sourceLanguage">
+                    <option th:each="sLang : ${languages}"
+                            th:value="${sLang.code}"
+                            th:text="${sLang.name}"
+                            th:selected="${sLang.code=='en'}"></option>
                 </select>
             </label>
         </div>
@@ -35,8 +38,11 @@
         <div class="targetLanguage">
             <h>Select the source language:</h>
             <label>
-                <select th:field="*{targetLanguage}">
-                    <option th:each="tLang : ${languages}" th:value="${tLang.code}" th:text="${tLang.name}"></option>
+                <select id="targetLanguage" name="targetLanguage">
+                    <option th:each="tLang : ${languages}"
+                            th:value="${tLang.code}"
+                            th:text="${tLang.name}"
+                            th:selected="${tLang.code=='ru'}"></option>
                 </select>
             </label>
         </div>
