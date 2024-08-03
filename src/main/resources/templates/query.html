@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="es">
+
+    <style>
+        .validationError {
+            color: red;
+        }
+    </style>
+
+    <head>
+        <title>Translator</title>
+    </head>
+
+    <form method="POST" th:object="${queryUnit}">
+        <div class="originalText">
+            <h>Enter text for translation:</h>
+            <label>
+                <input type="text" th:field="*{originalText}"/>
+            </label>
+            <span class="validationError" th:if="${#fields.hasErrors('originalText')}" th:errors="*{originalText}">
+                OriginalTextError
+            </span>
+        </div>
+
+        <div class="sourceLanguage">
+            <h>Select the source language:</h>
+            <label>
+                <select th:field="*{sourceLanguage}">
+                    <option th:each="sLang : ${languages}" th:value="${sLang.code}" th:text="${sLang.name}"></option>
+                </select>
+            </label>
+        </div>
+
+        <div class="targetLanguage">
+            <h>Select the source language:</h>
+            <label>
+                <select th:field="*{targetLanguage}">
+                    <option th:each="tLang : ${languages}" th:value="${tLang.code}" th:text="${tLang.name}"></option>
+                </select>
+            </label>
+        </div>
+
+        <div class="button">
+            <button>Translate</button>
+        </div>
+    </form>
+
+</html>

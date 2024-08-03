@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="es">
+
+    <style>
+        .finish {
+            display: grid;
+            place-items: center;
+        }
+    </style>
+
+    <head>
+        <title>Translator</title>
+    </head>
+
+    <body>
+        <div>
+            <h>Translated text: </h>
+            <span th:text="${responseUnit.translatedText}">Translated text</span>
+        </div>
+    </body>
+
+    <body>
+        <form method="POST">
+            <div class="finish">
+                <button>Finish</button>
+            </div>
+        </form>
+    </body>
+
+</html>
