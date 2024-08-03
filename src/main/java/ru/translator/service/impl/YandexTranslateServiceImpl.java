@@ -1,5 +1,6 @@
 package ru.translator.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Component
 public class YandexTranslateServiceImpl implements YandexTranslateService {
     private final static String BASE_URL = "https://translate.api.cloud.yandex.net/translate/v2";
@@ -30,7 +32,12 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
         String url = createUrlForLanguages();
         HttpEntity<HttpHeaders> entity = createHttpHeadersEntity();
         HttpEntity<LanguagesDTO> response = restTemplate.exchange(url, HttpMethod.POST, entity, LanguagesDTO.class);
-        return (response.getBody() == null) ? List.of() : response.getBody().languages();
+        if (response.getBody() != null) {
+            return response.getBody().languages();
+        } else {
+            log.warn(createWarnMessage("listLanguages"));
+            return List.of();
+        }
     }
 
     private String createUrlForLanguages() {
@@ -50,9 +57,12 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
                         String url = createUrlForTranslate(translationUnit, originalTextAsWords[finalIndex]);
                         HttpEntity<HttpHeaders> entity = createHttpHeadersEntity();
                         HttpEntity<TranslateDTO> response = restTemplate.exchange(url, HttpMethod.POST, entity, TranslateDTO.class);
-                        translatedTextAsWords[finalIndex] = (response.getBody() == null)
-                                ? "null"
-                                : response.getBody().getTranslatedText();
+                        if (response.getBody() != null) {
+                            translatedTextAsWords[finalIndex] = response.getBody().getTranslatedText();
+                        } else {
+                            log.warn(createWarnMessage("translate"));
+                            translatedTextAsWords[finalIndex] = "null";
+                        }
                     }
                 );
             }
@@ -60,6 +70,7 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
             service.shutdown();
             service.awaitTermination(1, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
+            log.error(e.getMessage());
             return "";
         }
 
@@ -79,5 +90,9 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
         headers.set("Content-Type", "application/json");
         headers.set("Authorization", "Api-Key " + apiKey);
         return new HttpEntity<>(headers);
+    }
+
+    private String createWarnMessage(String originalMethodeName) {
+        return "There is no body in response from '" + originalMethodeName + "' method.";
     }
 }

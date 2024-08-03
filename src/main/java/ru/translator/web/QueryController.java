@@ -2,7 +2,6 @@ package ru.translator.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +13,6 @@ import ru.translator.ResponseUnit;
 import ru.translator.data.ResponseUnitRepository;
 import ru.translator.service.YandexTranslateService;
 
-@Slf4j
 @Controller
 @RequestMapping("/query")
 public class QueryController {
