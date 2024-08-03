@@ -20,16 +20,10 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class YandexTranslateServiceImpl implements YandexTranslateService {
-    private final static int N_THREADS = 10;
-    private final static String CONTENT_TYPE = "application/json";
     private final static String BASE_URL = "https://translate.api.cloud.yandex.net/translate/v2";
-    private final static String LANGUAGES = "/languages";
-    private final static String TRANSLATE = "/translate";
-
+    private final RestTemplate restTemplate = new RestTemplate();
     @Value("${yandex.translate.api.key}")
     private String apiKey;
-
-    private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
     public List<Language> getSupportedLanguages() {
@@ -40,7 +34,7 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
     }
 
     private String createUrlForLanguages() {
-        return BASE_URL + LANGUAGES;
+        return BASE_URL + "/languages";
     }
 
     @Override
@@ -48,7 +42,8 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
         String[] originalTextAsWords = translationUnit.getOriginalTextAsWordsWithLengthAtLeastOneSymbol();
         String[] translatedTextAsWords = new String[originalTextAsWords.length];
 
-        try (ExecutorService service = Executors.newFixedThreadPool(N_THREADS)) {
+        int numberOfThreads = 10;
+        try (ExecutorService service = Executors.newFixedThreadPool(numberOfThreads)) {
             for (int i = 0; i < originalTextAsWords.length; i++) {
                 int finalIndex = i;
                 service.execute(() -> {
@@ -72,7 +67,7 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
     }
 
     private String createUrlForTranslate(QueryUnit translationUnit, String word) {
-        return UriComponentsBuilder.fromHttpUrl(BASE_URL + TRANSLATE)
+        return UriComponentsBuilder.fromHttpUrl(BASE_URL + "/translate")
                 .queryParam("sourceLanguageCode", translationUnit.getSourceLanguage().code())
                 .queryParam("targetLanguageCode", translationUnit.getTargetLanguage().code())
                 .queryParam("texts", List.of(word))
@@ -81,7 +76,7 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
 
     private HttpEntity<HttpHeaders> createHttpHeadersEntity() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", CONTENT_TYPE);
+        headers.set("Content-Type", "application/json");
         headers.set("Authorization", "Api-Key " + apiKey);
         return new HttpEntity<>(headers);
     }
