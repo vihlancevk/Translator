@@ -7,3 +7,8 @@ spring:
         name: translator
         url: jdbc:h2:mem:translator
         username: sa
+
+yandex:
+    translate:
+        api:
+            key: <KEY>

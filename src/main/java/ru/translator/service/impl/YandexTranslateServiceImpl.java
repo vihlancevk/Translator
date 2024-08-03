@@ -1,5 +1,6 @@
 package ru.translator.service.impl;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,10 +22,12 @@ import java.util.concurrent.TimeUnit;
 public class YandexTranslateServiceImpl implements YandexTranslateService {
     private final static int N_THREADS = 10;
     private final static String CONTENT_TYPE = "application/json";
-    private final static String AUTHORIZATION = "Api-Key ...";
     private final static String BASE_URL = "https://translate.api.cloud.yandex.net/translate/v2";
     private final static String LANGUAGES = "/languages";
     private final static String TRANSLATE = "/translate";
+
+    @Value("${yandex.translate.api.key}")
+    private String apiKey;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -79,7 +82,7 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
     private HttpEntity<HttpHeaders> createHttpHeadersEntity() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", CONTENT_TYPE);
-        headers.set("Authorization", AUTHORIZATION);
+        headers.set("Authorization", "Api-Key " + apiKey);
         return new HttpEntity<>(headers);
     }
 }
