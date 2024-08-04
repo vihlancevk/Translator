@@ -7,10 +7,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 import ru.translator.Language;
 import ru.translator.QueryUnit;
-import ru.translator.dto.LanguagesDTO;
+import ru.translator.dto.DetectLanguageDTO;
+import ru.translator.dto.ListLanguagesDTO;
 import ru.translator.dto.TranslateDTO;
 import ru.translator.service.YandexTranslateService;
 
@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import static ru.translator.constant.Constant.*;
 
 @Slf4j
 @Component
@@ -28,10 +30,32 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
     private String apiKey;
 
     @Override
-    public List<Language> getSupportedLanguages() {
+    public String detectLanguage(QueryUnit queryUnit) {
+        String url = createUrlForDetectLanguage(queryUnit);
+        HttpEntity<HttpHeaders> entity = createHttpHeadersEntity();
+        HttpEntity<DetectLanguageDTO> response = restTemplate.exchange(url, HttpMethod.POST, entity, DetectLanguageDTO.class);
+        if (response.getBody() != null) {
+            return response.getBody().languageCode();
+        } else {
+            log.warn(createWarnMessage("detectLanguage"));
+            return "";
+        }
+    }
+
+    private String createUrlForDetectLanguage(QueryUnit queryUnit) {
+        StringBuilder sb = new StringBuilder(BASE_URL + "/detect");
+        sb.append(QUESTION_SIGN);
+        sb.append("text").append(EQUAL_SIGN).append(queryUnit.getOriginalText());
+        sb.append(AMPERSAND_SIGN);
+        sb.append("languageCodeHints").append(EQUAL_SIGN).append(queryUnit.getSourceLanguage().code());
+        return sb.toString();
+    }
+
+    @Override
+    public List<Language> listLanguages() {
         String url = createUrlForLanguages();
         HttpEntity<HttpHeaders> entity = createHttpHeadersEntity();
-        HttpEntity<LanguagesDTO> response = restTemplate.exchange(url, HttpMethod.POST, entity, LanguagesDTO.class);
+        HttpEntity<ListLanguagesDTO> response = restTemplate.exchange(url, HttpMethod.POST, entity, ListLanguagesDTO.class);
         if (response.getBody() != null) {
             return response.getBody().languages();
         } else {
@@ -45,8 +69,11 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
     }
 
     @Override
-    public String translate(QueryUnit translationUnit) {
-        String[] originalTextAsWords = translationUnit.getOriginalTextAsWordsWithLengthAtLeastOneSymbol();
+    public String translate(QueryUnit queryUnit) {
+        if (!originalTextHasCorrectSourceLanguageInQueryUnit(queryUnit))
+            return "Language of original text is different from chosen beginning language for translate.";
+
+        String[] originalTextAsWords = queryUnit.getOriginalTextAsWordsWithLengthAtLeastOneSymbol();
         String[] translatedTextAsWords = new String[originalTextAsWords.length];
 
         int numberOfThreads = 10;
@@ -54,14 +81,14 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
             for (int i = 0; i < originalTextAsWords.length; i++) {
                 int finalIndex = i;
                 service.execute(() -> {
-                        String url = createUrlForTranslate(translationUnit, originalTextAsWords[finalIndex]);
+                        String url = createUrlForTranslate(queryUnit, originalTextAsWords[finalIndex]);
                         HttpEntity<HttpHeaders> entity = createHttpHeadersEntity();
                         HttpEntity<TranslateDTO> response = restTemplate.exchange(url, HttpMethod.POST, entity, TranslateDTO.class);
                         if (response.getBody() != null) {
                             translatedTextAsWords[finalIndex] = response.getBody().getTranslatedText();
                         } else {
                             log.warn(createWarnMessage("translate"));
-                            translatedTextAsWords[finalIndex] = "null";
+                            translatedTextAsWords[finalIndex] = "<error>";
                         }
                     }
                 );
@@ -77,12 +104,20 @@ public class YandexTranslateServiceImpl implements YandexTranslateService {
         return String.join(" ", translatedTextAsWords);
     }
 
-    private String createUrlForTranslate(QueryUnit translationUnit, String word) {
-        return UriComponentsBuilder.fromHttpUrl(BASE_URL + "/translate")
-                .queryParam("sourceLanguageCode", translationUnit.getSourceLanguage().code())
-                .queryParam("targetLanguageCode", translationUnit.getTargetLanguage().code())
-                .queryParam("texts", List.of(word))
-                .toUriString();
+    private boolean originalTextHasCorrectSourceLanguageInQueryUnit(QueryUnit queryUnit) {
+        String languageCode = detectLanguage(queryUnit);
+        return queryUnit.getSourceLanguage().code().equals(languageCode);
+    }
+
+    private String createUrlForTranslate(QueryUnit queryUnit, String word) {
+        StringBuilder sb = new StringBuilder(BASE_URL + "/translate");
+        sb.append(QUESTION_SIGN);
+        sb.append("sourceLanguageCode").append(EQUAL_SIGN).append(queryUnit.getSourceLanguage().code());
+        sb.append(AMPERSAND_SIGN);
+        sb.append("targetLanguageCode").append(EQUAL_SIGN).append(queryUnit.getTargetLanguage().code());
+        sb.append(AMPERSAND_SIGN);
+        sb.append("texts").append(EQUAL_SIGN).append(word);
+        return sb.toString();
     }
 
     private HttpEntity<HttpHeaders> createHttpHeadersEntity() {

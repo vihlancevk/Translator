@@ -8,6 +8,9 @@ import java.util.List;
 
 @Service
 public interface YandexTranslateService {
-    List<Language> getSupportedLanguages();
-    String translate(QueryUnit translationUnit);
+    String detectLanguage(QueryUnit queryUnit);
+
+    List<Language> listLanguages();
+
+    String translate(QueryUnit queryUnit);
 }

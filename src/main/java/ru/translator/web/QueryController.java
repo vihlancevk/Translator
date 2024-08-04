@@ -28,7 +28,7 @@ public class QueryController {
 
     @ModelAttribute
     public void addLanguagesToModel(Model model) {
-        model.addAttribute("languages", yandexTranslateService.getSupportedLanguages());
+        model.addAttribute("languages", yandexTranslateService.listLanguages());
     }
 
     @ModelAttribute("queryUnit")

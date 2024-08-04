@@ -1,6 +1,5 @@
 package ru.translator.web;
 
-import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
@@ -17,8 +16,8 @@ public class LanguageByCodeConverter implements Converter<String, Language> {
     }
 
     @Override
-    public Language convert(@Nullable String code) {
-        for (Language language : yandexTranslateService.getSupportedLanguages())
+    public Language convert(String code) {
+        for (Language language : yandexTranslateService.listLanguages())
             if (language.code().equals(code))
                 return language;
         return null;
