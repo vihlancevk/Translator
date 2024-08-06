@@ -43,22 +43,22 @@ public class YandexTranslateServiceTest {
 	}
 
 	@Test
-	public void testTranslateBadQuery() {
-		Query badQuery = new Query();
-		badQuery.setOriginalText("Было у отца три сына");
-		badQuery.setSourceLanguageCode("en");
-		badQuery.setTargetLanguageCode("ru");
-		String translatedText = yandexTranslateService.translate(badQuery);
-		assertEquals(translatedText, "Было у отца три сына");
+	public void testTranslateAutoQuery() {
+		Query autoQuery = new Query();
+		autoQuery.setOriginalText("Green apple");
+		autoQuery.setSourceLanguageCode("auto");
+		autoQuery.setTargetLanguageCode("ru");
+		String translatedText = yandexTranslateService.translate(autoQuery);
+		assertEquals(translatedText, "Зеленый яблоко");
 	}
 
 	@Test
-	public void testTranslateGoodQuery() {
-		Query goodQuery = new Query();
-		goodQuery.setOriginalText("Было у отца три сына");
-		goodQuery.setSourceLanguageCode("ru");
-		goodQuery.setTargetLanguageCode("en");
-		String translatedText = yandexTranslateService.translate(goodQuery);
-		assertNotEquals(translatedText, "Language of original text is different from chosen beginning language for translate.");
+	public void testTranslateQuery() {
+		Query query = new Query();
+		query.setOriginalText("Кот");
+		query.setSourceLanguageCode("ru");
+		query.setTargetLanguageCode("en");
+		String translatedText = yandexTranslateService.translate(query);
+		assertEquals(translatedText, "Cat");
 	}
 }
