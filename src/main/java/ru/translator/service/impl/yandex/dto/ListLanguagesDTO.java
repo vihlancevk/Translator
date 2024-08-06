@@ -12,6 +12,7 @@ public record ListLanguagesDTO(List<Language> languages) {
     @JsonCreator
     public ListLanguagesDTO(@JsonProperty("languages") List<Language> languages) {
         this.languages = removeInvalidLanguages(languages);
+        this.languages.add(new Language("auto", "Auto"));
         this.languages.sort(Comparator.comparing(Language::code));
     }
 

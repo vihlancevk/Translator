@@ -12,7 +12,7 @@
         <title>Translator</title>
     </head>
 
-    <form method="POST" th:object="${queryUnit}">
+    <form method="POST" th:object="${query}">
         <div class="originalText">
             <h>Enter text for translation:</h>
             <label>
@@ -26,11 +26,11 @@
         <div class="sourceLanguage">
             <h>Select the source language:</h>
             <label>
-                <select id="sourceLanguage" name="sourceLanguage">
+                <select id="sourceLanguageCode" name="sourceLanguageCode">
                     <option th:each="sLang : ${languages}"
                             th:value="${sLang.code}"
                             th:text="${sLang.name}"
-                            th:selected="${sLang.code=='en'}"></option>
+                            th:selected="${sLang.code=='auto'}"></option>
                 </select>
             </label>
         </div>
@@ -38,7 +38,7 @@
         <div class="targetLanguage">
             <h>Select the source language:</h>
             <label>
-                <select id="targetLanguage" name="targetLanguage">
+                <select id="targetLanguageCode" name="targetLanguageCode">
                     <option th:each="tLang : ${languages}"
                             th:value="${tLang.code}"
                             th:text="${tLang.name}"

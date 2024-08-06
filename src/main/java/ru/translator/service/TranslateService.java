@@ -2,15 +2,15 @@ package ru.translator.service;
 
 import org.springframework.stereotype.Service;
 import ru.translator.Language;
-import ru.translator.QueryUnit;
+import ru.translator.Query;
 
 import java.util.List;
 
 @Service
 public interface TranslateService {
-    String detectLanguage(QueryUnit queryUnit);
+    String detectLanguage(Query query);
 
     List<Language> listLanguages();
 
-    String translate(QueryUnit queryUnit);
+    String translate(Query query);
 }

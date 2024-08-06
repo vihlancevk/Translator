@@ -16,22 +16,22 @@ public class YandexTranslateServiceTest {
 
 	@Test
 	public void testDetectLanguageBadQuery() {
-		QueryUnit badQueryUnit = new QueryUnit();
-		badQueryUnit.setOriginalText("Было у отца три сына");
-		badQueryUnit.setSourceLanguage(new Language("en", "English"));
-		badQueryUnit.setTargetLanguage(new Language("ru", "русский"));
-		String detectLanguage = yandexTranslateService.detectLanguage(badQueryUnit);
+		Query badQuery = new Query();
+		badQuery.setOriginalText("Было у отца три сына");
+		badQuery.setSourceLanguageCode("en");
+		badQuery.setTargetLanguageCode("ru");
+		String detectLanguage = yandexTranslateService.detectLanguage(badQuery);
 		assertNotEquals(detectLanguage, "en");
 		assertEquals(detectLanguage, "ru");
 	}
 
 	@Test
 	public void testDetectLanguageGoodQuery() {
-		QueryUnit goodQueryUnit = new QueryUnit();
-		goodQueryUnit.setOriginalText("Было у отца три сына");
-		goodQueryUnit.setSourceLanguage(new Language("ru", "русский"));
-		goodQueryUnit.setTargetLanguage(new Language("en", "English"));
-		String detectLanguage = yandexTranslateService.detectLanguage(goodQueryUnit);
+		Query goodQuery = new Query();
+		goodQuery.setOriginalText("Было у отца три сына");
+		goodQuery.setSourceLanguageCode("ru");
+		goodQuery.setTargetLanguageCode("en");
+		String detectLanguage = yandexTranslateService.detectLanguage(goodQuery);
 		assertNotEquals(detectLanguage, "en");
 		assertEquals(detectLanguage, "ru");
 	}
@@ -44,21 +44,21 @@ public class YandexTranslateServiceTest {
 
 	@Test
 	public void testTranslateBadQuery() {
-		QueryUnit badQueryUnit = new QueryUnit();
-		badQueryUnit.setOriginalText("Было у отца три сына");
-		badQueryUnit.setSourceLanguage(new Language("en", "English"));
-		badQueryUnit.setTargetLanguage(new Language("ru", "русский"));
-		String translatedText = yandexTranslateService.translate(badQueryUnit);
-		assertEquals(translatedText, "Language of original text is different from chosen beginning language for translate.");
+		Query badQuery = new Query();
+		badQuery.setOriginalText("Было у отца три сына");
+		badQuery.setSourceLanguageCode("en");
+		badQuery.setTargetLanguageCode("ru");
+		String translatedText = yandexTranslateService.translate(badQuery);
+		assertEquals(translatedText, "Было у отца три сына");
 	}
 
 	@Test
 	public void testTranslateGoodQuery() {
-		QueryUnit goodQueryUnit = new QueryUnit();
-		goodQueryUnit.setOriginalText("Было у отца три сына");
-		goodQueryUnit.setSourceLanguage(new Language("ru", "русский"));
-		goodQueryUnit.setTargetLanguage(new Language("en", "English"));
-		String translatedText = yandexTranslateService.translate(goodQueryUnit);
+		Query goodQuery = new Query();
+		goodQuery.setOriginalText("Было у отца три сына");
+		goodQuery.setSourceLanguageCode("ru");
+		goodQuery.setTargetLanguageCode("en");
+		String translatedText = yandexTranslateService.translate(goodQuery);
 		assertNotEquals(translatedText, "Language of original text is different from chosen beginning language for translate.");
 	}
 }

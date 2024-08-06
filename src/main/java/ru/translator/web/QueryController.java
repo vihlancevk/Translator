@@ -8,22 +8,22 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.translator.QueryUnit;
-import ru.translator.ResponseUnit;
-import ru.translator.data.ResponseUnitRepository;
+import ru.translator.Query;
+import ru.translator.Response;
+import ru.translator.data.ResponseURepository;
 import ru.translator.service.TranslateService;
 
 @Controller
 @RequestMapping("/query")
 public class QueryController {
     private final TranslateService translateService;
-    private final ResponseUnitRepository responseUnitRepository;
+    private final ResponseURepository responseURepository;
 
     @Autowired
     public QueryController(TranslateService translateService,
-                           ResponseUnitRepository responseUnitRepository) {
+                           ResponseURepository responseURepository) {
         this.translateService = translateService;
-        this.responseUnitRepository = responseUnitRepository;
+        this.responseURepository = responseURepository;
     }
 
     @ModelAttribute
@@ -31,9 +31,9 @@ public class QueryController {
         model.addAttribute("languages", translateService.listLanguages());
     }
 
-    @ModelAttribute("queryUnit")
-    public QueryUnit queryUnit() {
-        return new QueryUnit();
+    @ModelAttribute("query")
+    public Query queryUnit() {
+        return new Query();
     }
 
     @GetMapping
@@ -42,20 +42,20 @@ public class QueryController {
     }
 
     @PostMapping
-    public String processTranslation(@Valid QueryUnit queryUnit, Errors errors,
+    public String processTranslation(@Valid Query query, Errors errors,
                                      RedirectAttributes redirectAttributes,
                                      HttpServletRequest request) {
         if (errors.hasErrors())
             return "query";
 
         String ipAddress = request.getRemoteAddr();
-        String originalText = queryUnit.getOriginalText();
-        String translatedText = translateService.translate(queryUnit);
-        ResponseUnit responseUnit = new ResponseUnit(ipAddress, originalText, translatedText);
+        String originalText = query.getOriginalText();
+        String translatedText = translateService.translate(query);
+        Response response = new Response(ipAddress, originalText, translatedText);
 
-        responseUnitRepository.save(responseUnit);
+        responseURepository.save(response);
 
-        redirectAttributes.addFlashAttribute("responseUnit", responseUnit);
+        redirectAttributes.addFlashAttribute("response", response);
         return "redirect:/response";
     }
 }
