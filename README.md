@@ -7,15 +7,12 @@
 sudo apt update && sudo apt upgrade
 sudo apt install -y git
 sudo apt install -y openjdk-21-jdk
-mkdir project
-cd project/
 git clone https://github.com/vihlancevk/Translator
 cd Translator/
 ```
 ## Использование
 1. [Получить api-ключ для использования Yandex.Translate](https://yandex.cloud/ru/docs/translate/operations/sa-api-key#create-account).
-2. Открыть [файл](src/main/resources/application.yml) в корне проекта и заменить запись \<KEY> на свой ключ.
-3. Запустить тесты командой `./gradlew test`, чтобы убедиться в работоспособности приложения с вашим ключом.
+2. Открыть [файл](src/main/resources/application.yml) и заменить запись \<KEY> на свой ключ.
 4. Запустить приложение командой `./gradlew run`, после чего открыть [браузер](http://localhost:8080/).
 ## Дополнительно
 Для просмотры базы данных во время работы приложения необходимо открыть [страницу](http://localhost:8080/h2-console/).
