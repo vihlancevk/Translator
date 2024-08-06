@@ -43,22 +43,32 @@ public class YandexTranslateServiceTest {
 	}
 
 	@Test
-	public void testTranslateAutoQuery() {
-		Query autoQuery = new Query();
-		autoQuery.setOriginalText("Green apple");
-		autoQuery.setSourceLanguageCode("auto");
-		autoQuery.setTargetLanguageCode("ru");
-		String translatedText = yandexTranslateService.translate(autoQuery);
+	public void testTranslateQueryAutoRu() {
+		Query query = new Query();
+		query.setOriginalText("Green apple");
+		query.setSourceLanguageCode("auto");
+		query.setTargetLanguageCode("ru");
+		String translatedText = yandexTranslateService.translate(query);
 		assertEquals(translatedText, "Зеленый яблоко");
 	}
 
 	@Test
-	public void testTranslateQuery() {
+	public void testTranslateQueryRuEn() {
 		Query query = new Query();
 		query.setOriginalText("Кот");
 		query.setSourceLanguageCode("ru");
 		query.setTargetLanguageCode("en");
 		String translatedText = yandexTranslateService.translate(query);
 		assertEquals(translatedText, "Cat");
+	}
+
+	@Test
+	public void testTranslateQueryRuId() {
+		Query query = new Query();
+		query.setOriginalText("Трава Расти Дерево Диплом Учёба");
+		query.setSourceLanguageCode("ru");
+		query.setTargetLanguageCode("id");
+		String translatedText = yandexTranslateService.translate(query);
+		assertEquals(translatedText, "Rumput Tumbuh Pohon Diploma Studi");
 	}
 }

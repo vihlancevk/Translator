@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.translator.Language;
 import ru.translator.Query;
 import ru.translator.service.impl.yandex.dto.DetectLanguageDTO;
@@ -43,10 +44,10 @@ public class YandexTranslateService implements TranslateService {
     }
 
     private String createUrlForDetectLanguage(Query query) {
-        StringBuilder sb = new StringBuilder(BASE_URL + "/detect");
-        sb.append("?");
-        sb.append("text").append("=").append(query.getOriginalText());
-        return sb.toString();
+        return UriComponentsBuilder.fromHttpUrl(BASE_URL + "/detect")
+                .queryParam("text", query.getOriginalText())
+                .build()
+                .toString();
     }
 
     @Override
@@ -64,7 +65,9 @@ public class YandexTranslateService implements TranslateService {
     }
 
     private String createUrlForLanguages() {
-        return BASE_URL + "/languages";
+        return UriComponentsBuilder.fromHttpUrl(BASE_URL + "/languages")
+                .build()
+                .toString();
     }
 
     @Override
@@ -110,14 +113,12 @@ public class YandexTranslateService implements TranslateService {
     }
 
     private String createUrlForTranslate(Query query, String word) {
-        StringBuilder sb = new StringBuilder(BASE_URL + "/translate");
-        sb.append("?");
-        sb.append("sourceLanguageCode").append("=").append(query.getSourceLanguageCode());
-        sb.append("&");
-        sb.append("targetLanguageCode").append("=").append(query.getTargetLanguageCode());
-        sb.append("&");
-        sb.append("texts").append("=").append(word);
-        return sb.toString();
+        return UriComponentsBuilder.fromHttpUrl(BASE_URL + "/translate")
+                .queryParam("sourceLanguageCode", query.getSourceLanguageCode())
+                .queryParam("targetLanguageCode", query.getTargetLanguageCode())
+                .queryParam("texts", word)
+                .build()
+                .toString();
     }
 
     private HttpEntity<HttpHeaders> createHttpHeadersEntity() {
