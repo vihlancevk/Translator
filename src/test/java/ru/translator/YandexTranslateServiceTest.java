@@ -3,16 +3,16 @@ package ru.translator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.translator.service.impl.YandexTranslateServiceImpl;
+import ru.translator.service.impl.yandex.YandexTranslateService;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class YandexTranslateServiceImplTest {
+public class YandexTranslateServiceTest {
 	@Autowired
-	private YandexTranslateServiceImpl yandexTranslateService;
+	private YandexTranslateService yandexTranslateService;
 
 	@Test
 	public void testDetectLanguageBadQuery() {

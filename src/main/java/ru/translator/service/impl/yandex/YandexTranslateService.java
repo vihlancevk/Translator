@@ -1,4 +1,4 @@
-package ru.translator.service.impl;
+package ru.translator.service.impl.yandex;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ru.translator.Language;
 import ru.translator.QueryUnit;
-import ru.translator.dto.DetectLanguageDTO;
-import ru.translator.dto.ListLanguagesDTO;
-import ru.translator.dto.TranslateDTO;
-import ru.translator.service.YandexTranslateService;
+import ru.translator.service.impl.yandex.dto.DetectLanguageDTO;
+import ru.translator.service.impl.yandex.dto.ListLanguagesDTO;
+import ru.translator.service.impl.yandex.dto.TranslateDTO;
+import ru.translator.service.TranslateService;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -23,7 +23,7 @@ import static ru.translator.constant.Constant.*;
 
 @Slf4j
 @Component
-public class YandexTranslateServiceImpl implements YandexTranslateService {
+public class YandexTranslateService implements TranslateService {
     private final static String BASE_URL = "https://translate.api.cloud.yandex.net/translate/v2";
     private final RestTemplate restTemplate = new RestTemplate();
     @Value("${yandex.translate.api.key}")

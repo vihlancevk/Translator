@@ -1,4 +1,4 @@
-package ru.translator.dto;
+package ru.translator.service.impl.yandex.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,13 +11,13 @@ import java.util.stream.Collectors;
 public record ListLanguagesDTO(List<Language> languages) {
     @JsonCreator
     public ListLanguagesDTO(@JsonProperty("languages") List<Language> languages) {
-        this.languages = removeLanguagesWithAtLeastOneNullFieldAndSortedRemainingByCode(languages);
+        this.languages = removeInvalidLanguages(languages);
+        this.languages.sort(Comparator.comparing(Language::code));
     }
 
-    private List<Language> removeLanguagesWithAtLeastOneNullFieldAndSortedRemainingByCode(List<Language> languages) {
+    private List<Language> removeInvalidLanguages(List<Language> languages) {
         return languages.stream()
                 .filter(language -> language.code() != null && language.name() != null)
-                .sorted(Comparator.comparing(Language::code))
                 .collect(Collectors.toList());
     }
 }

@@ -7,7 +7,7 @@ import ru.translator.QueryUnit;
 import java.util.List;
 
 @Service
-public interface YandexTranslateService {
+public interface TranslateService {
     String detectLanguage(QueryUnit queryUnit);
 
     List<Language> listLanguages();

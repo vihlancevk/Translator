@@ -1,9 +1,10 @@
-package ru.translator.dto;
+package ru.translator.service.impl.yandex.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public record TranslateDTO(List<Translation> translations) {
     @JsonCreator
@@ -12,10 +13,9 @@ public record TranslateDTO(List<Translation> translations) {
     }
 
     public String getTranslatedText() {
-        String[] words = new String[translations.size()];
-        for (int i = 0; i < translations.size(); i++)
-            words[i] = translations.get(i).text();
-        return String.join(" ", words);
+        return translations.stream()
+                .map(Translation::text)
+                .collect(Collectors.joining(" "));
     }
 
     public record Translation(String text) {

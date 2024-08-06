@@ -11,24 +11,24 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.translator.QueryUnit;
 import ru.translator.ResponseUnit;
 import ru.translator.data.ResponseUnitRepository;
-import ru.translator.service.YandexTranslateService;
+import ru.translator.service.TranslateService;
 
 @Controller
 @RequestMapping("/query")
 public class QueryController {
-    private final YandexTranslateService yandexTranslateService;
+    private final TranslateService translateService;
     private final ResponseUnitRepository responseUnitRepository;
 
     @Autowired
-    public QueryController(YandexTranslateService yandexTranslateService,
+    public QueryController(TranslateService translateService,
                            ResponseUnitRepository responseUnitRepository) {
-        this.yandexTranslateService = yandexTranslateService;
+        this.translateService = translateService;
         this.responseUnitRepository = responseUnitRepository;
     }
 
     @ModelAttribute
     public void addLanguagesToModel(Model model) {
-        model.addAttribute("languages", yandexTranslateService.listLanguages());
+        model.addAttribute("languages", translateService.listLanguages());
     }
 
     @ModelAttribute("queryUnit")
@@ -50,7 +50,7 @@ public class QueryController {
 
         String ipAddress = request.getRemoteAddr();
         String originalText = queryUnit.getOriginalText();
-        String translatedText = yandexTranslateService.translate(queryUnit);
+        String translatedText = translateService.translate(queryUnit);
         ResponseUnit responseUnit = new ResponseUnit(ipAddress, originalText, translatedText);
 
         responseUnitRepository.save(responseUnit);
